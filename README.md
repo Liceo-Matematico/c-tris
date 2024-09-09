@@ -40,9 +40,9 @@ programmazione di un microcontrollore.
 - Uso di software open source per la gestione del
 microcontrollore e della simulazione di circuiti.
 #
-# UN GIOCO INTERESSANTE
+# UN GIOCO INGEGNOSO
 - Lo stimolo è venuto dal seminario sul QTris del prof Aliscia
-Hamma dell’Universit`a di Napoli svolto nel contesto delle
+Hamma dell’Università di Napoli svolto nel contesto delle
 attivit`a di fisica per il LM di Roma 1 coordinate dal prof
 Sergio Caprara: utilizzare il gioco del Tris per introdurre le
 leggi della meccanica quantistica.
@@ -51,4 +51,26 @@ leggi della meccanica quantistica.
 complessi ed il prodotto vettoriale in coordinate...e, se si
 vuole, anche i quaternioni.
 #
-# LISTATO DELL SCRIPT ( DETTO ***SKETCH*** ) DELLA ***IDE*** DI ARDUINO
+# IL RIUSO DEL GIOCO DEL TRIS
+## C-TRIS
+- Si gioca con 4 simboli: G = {±1, ±i} (gruppo
+abeliano).
+- Due o quattro giocatori. Inizialmente ogni giocatore estrae
+una carta e la dispone sul campo del Tris fino a completare le
+9 caselle.
+- Ogni giocatore estrae a caso 1 simbolo, se in due ciascun
+giocatore estrae 2 simboli.
+- Ad ogni giocatore vengono distribuite 2 carte. Scopo `e
+realizzare tris di simboli uguali utilizzando la tabella dei
+prodotti:
+
+| Prodotto | 1 | -1 | i | -i |
+| :---     |     :---:      |     :---:      |    :---:       |       ---:    |
+| **1**   | 1    | -1     | i     | -i    |
+| **-1**  | -1   | 1   | -i     | i   |
+| **i**  | i | -i | 1 | -1  |
+| **-i**  | -i     | i | -1 | 1 |
+
+## 3D-TRIS
+
+
