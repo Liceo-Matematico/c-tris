@@ -1,0 +1,46 @@
+TOMMY (& Arian):
+% - quando l'utente scrive il nome su "REGISTRATI" e preme "INVIO" appare il tasto "INIZIA PARTITA"
+% - quando clicca "ABBANDONA PARTITA" ti deve riportare alla pagina "MODALITÀ"
+% - DRAG & DROP: https://youtu.be/QjiZldvbrok?si=NaDvolBz6g1rwylM
+% - DA RIVEDERE regole (riga 116) problema: quando clicchi una carta coperta quella si gira e fa vedere il valore; però se la trascini su un altro numero da un risultato sbagliato
+- fare flip card con la prospettiva
+- quando giochi una delle due carte (ondrop) all'interno del 'tappetino', dal mazzo si gira la prima carta e si posiziona al posto della carta appena giocata
+- il mazzo in basso
+
+
+
+
+
+
+% QUI CI DICIAMO TUTTE LE COSE DA FARE:
+quando qualcosa è stato completato → cursore in qualsiasi punto della riga → Ctrl + Maiusc + 7
+% - esempio
+
+% per tutto il resto c'è la Chat
+
+Ordine delle pagine:
+- index
+- modalità
+- tipo
+- 2giocatori/4giocatori
+- 
+
+
+FLAVIO:
+- in <head> devi inserire
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+- nel <body> (alla fine) devi inserire
+<script src="script.js"></script>
+
+% - fare pagina "MODALITÀ"
+
+
+
+
+CLARA:
+- cambiare FONT, IMPAGINAZIONE e COLORE del BACKGROUND
+- MODIFICA TUTTI I BOTTONI CHE TROVI NELLE VARIE PAGINE
+
+
+
+
