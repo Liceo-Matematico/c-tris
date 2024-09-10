@@ -1,7 +1,7 @@
 Prima demo Giocabile del c-tris
 Mancano:
 - lo script per generare e distribuire le carte ad ogni turno
-- un servizio di hosting per il server
+- un servizio di hosting per il server (render.com potenziale sito di hosting: https://ctris.onrender.com)
 
 Per giocare:
 - installare node js sul proprio computer
