@@ -339,7 +339,6 @@
                 dragenter: function (e) {
                 },
                 drop: function (e) {
-                    console.log(parent.myTurn);
                     if (!parent.myTurn) { return; }
 
                     e.stopImmediatePropagation();
@@ -358,8 +357,8 @@
                     console.log(win);
                     if(win)
                         parent.log("win!");
-                    parent.sendMove({ table: tableToJson().field, win: win });
-                    parent.myTurn = false;
+                    parent.sendMove({ game: parent.game, table: tableToJson().field, win: win });
+                    parent.changeTurn(false);
                 },
             });
         }
@@ -393,6 +392,7 @@
 
         function init() {
             console.log("init");
+            parent.changeTurn(parent.myTurn);
             if (parent.game == null) {
                 parent.log("Enter game code first!");
                 parent.loadLobby();
@@ -433,6 +433,7 @@
         <hr />
         <br />
 
+        <h3 id="turnDisplayer">Your Turn</h3>
         <!--GRIGLIA DI GIOCO  -->
         <table class="tabella" id="campo" style="width: 150px">
             <tr>

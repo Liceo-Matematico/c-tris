@@ -22,30 +22,42 @@ function validateGamesForUser(socketid) {
     })
 }
 
+function changeGameStatus(code, status) {
+    console.log("changing status...");
+    games.forEach(element => {
+        if (element.code == code) {
+            console.log(code, status);
+            element.closed = status;
+        }
+    })
+}
+
 function joinGame(id, socketid) {
     var exists = false;
-    var index = 0;
+    var index = -1;
 
     validateGamesForUser(socketid);
 
     for (var i = 0; i < games.length; i++) {
 
-        if (games[i].code == id) {
+        if (games[i].code == id && !games[i].closed) {
             if (!games[i].p.includes(socketid) && games[i].p.length < 2) {
                 games[i].p.push(socketid);
+                index = i;
             }
-            if (games[i].p.length >= 2) {
+            else if (games[i].p.length >= 2) {
                 io.to(socketid).emit('message', "Game with code: \"" + id + "\" is full");
             }
-            exists = true;
-            index = i;
         }
+        if (games[i].code == id)
+            exists = true;
     }
     if (!exists) {
-        games.push({ code: id, p: [socketid] });
+        games.push({ code: id, p: [socketid], closed: false });
         index = games.length - 1;
     }
-    notifyGameChangesToClients(games[index]);
+    if (index != -1)
+        notifyGameChangesToClients(games[index]);
     console.log(games);
 }
 function notifyGameChangesToClients(game) {
@@ -79,6 +91,11 @@ io.on('connection', (socket) => {
     socket.emit('init');
 
     socket.on('sendMove', (socketid, data) => {
+        console.log(data);
+        if (data.win == true) {
+            console.log("changing status");
+            changeGameStatus(data.game.code, true);
+        }
         io.to(socketid).emit('recieveMove', data);
     })
 

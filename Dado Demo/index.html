@@ -16,12 +16,13 @@
 
         socket.on('gameJoined', function (data) {
             game = data;
+            console.log(game);
             log("Game Code: " + data.code + "\nPlayers:\n " + data.p[0] + "\n" + data.p[1]);
             if (data.p[0] == id && data.p[1] != undefined) {
-                myTurn = true;
+                changeTurn(true);
             }
             else {
-                myTurn = false;
+                changeTurn(false);
             }
             try {
                 document.getElementById('iframe').contentWindow.init();
@@ -31,33 +32,50 @@
         })
 
         socket.on('recieveMove', (data) => {
+            document.getElementById('iframe').contentWindow.arrayToTable(data.table);
             if (data.win) {
                 log("Lost!");
                 return;
             }
-            myTurn = true;
-            document.getElementById('iframe').contentWindow.arrayToTable(data.table);
+            changeTurn(true);
         })
 
         socket.on('message', function (data) {
             log(data);
         })
 
+        function changeTurn(turn) {
+            myTurn = turn;
+            var innerDoc = document.getElementById('iframe').contentDocument || iframe.contentWindow.document;
+            console.log(innerDoc);
+            try {
+                innerDoc.getElementById('turnDisplayer').innerText = myTurn ? "Your Turn" : "Opponent's Turn";
+            }
+            catch (error) {
+            }
+        }
         function init() {
             id = socket.id;
             log("your ID: " + socket.id);
             document.getElementById('yourId').innerText = "Your Id: " + socket.id;
+            loadLobby();
         }
 
         function joinGame() {
             console.log("joining game");
             var code = document.getElementById('iframe').contentWindow.document.getElementById('codeField').value;
+            console.log(game);
             if (code == "" || code == null) {
                 parent.log("Enter game code first!");
                 parent.loadLobby();
                 return;
             }
             socket.emit('joinGame', code, socket.id);
+            if (game == null || code != game.code) {
+                parent.log("failed to join game with code: " + code);
+                parent.loadLobby();
+                return;
+            }
             loadGame();
         }
 
