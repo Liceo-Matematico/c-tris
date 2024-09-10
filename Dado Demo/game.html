@@ -1,0 +1,507 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ctris match</title>
+
+    <style>
+        /* GUARDA FILE ISTRUZIONI.txt */
+        i9html,
+        .title1 {
+            color: cadetblue;
+            font-size: 60px;
+            margin-left: 100px;
+            text-align: center;
+        }
+
+        .grid {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+        }
+
+        .tasto {
+
+            background-color: #4CAF50;
+
+            border-style: dotted;
+            border-top-color: green;
+
+        }
+
+        body {
+            padding: 0;
+
+            color: rebeccapurple;
+            background-color: lightgreen;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+
+        }
+
+        a {
+
+            text-decoration: none;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        main {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title {
+            margin: 0;
+            line-height: 1.15;
+            font-size: 4rem;
+        }
+
+        .title,
+        .description {
+            text-align: center;
+        }
+
+        .description {
+            margin: 4rem 0;
+            line-height: 1.5;
+            font-size: 1.5rem;
+        }
+
+        .code {
+            background: #fafafa;
+            border-radius: 5px;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+                Bitstream Vera Sans Mono, Courier New, monospace;
+        }
+
+        .grid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 800px;
+        }
+
+        .tabella {
+            table {
+                border-collapse: collapse
+            }
+
+            td,
+            th {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            text-align: center;
+        }
+
+        .tappetino {
+            height: 60px;
+            width: 90px;
+            padding-top: 5px;
+            background-color: #4CAF50;
+            color: black;
+            text-align: center;
+            border-radius: 6px;
+        }
+
+        .mazzo {
+            text-align: center;
+            height: 40px;
+            width: 29.045px;
+
+            background-color: transparent;
+            /* border: 1px solid #f1f1f1; */
+            perspective: 100px;
+        }
+
+        .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 1s;
+            transform-style: preserve-3d;
+        }
+
+        .carta {
+            margin: 5px;
+            padding: 0;
+            vertical-align: middle;
+            text-align: center;
+            color: inherit;
+            background-color: #f0f0f0;
+            text-decoration: none;
+            border: 0px solid #eaeaea;
+            transition: background-color 0.5s ease, font-weight 0.15s ease;
+            height: 40px;
+            width: 29.05px;
+        }
+
+        .dorso,
+        .faccia {
+            margin: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            /* -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+        }
+
+        .faccia {
+            transform: rotateY(-180deg);
+        }
+
+        .carta:hover {
+            background-color: #c2d7ef;
+            font-weight: 650;
+        }
+
+        @media (max-width: 500px) {
+            .tabella {
+                width: 100%;
+                flex-direction: column;
+            }
+        }
+
+        #contenitore {
+            width: 200px;
+            height: 26px;
+            border: 3px solid black;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        #interno {
+            width: 0%;
+            height: 21px;
+            background-color: #ff0000;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+    <script>
+        var carte;
+        $(document).ready(function () {
+            $(".mazzo").click(function () {
+                $(".inner").css("transform", "rotateY(180deg)");
+            });
+
+            carte = $("body").find(".carta");
+
+            var coperta = $('[coperta="true"]');
+            coperta.on("click", function () {
+                console.log("hai cliccato una carta coperta");
+                // console.log(this)
+                $(this).attr("coperta", "false");
+                // console.log($(this).attr('coperta'))
+                mostraValore();
+                drag();
+            });
+
+
+            mostraValore();
+            drag();
+
+
+            // regole
+            var percentuale = 30;
+            setInterval(function () {
+                var interno = $("#interno");
+                interno.css("width", percentuale * (10 / 3) + "%");
+                interno.html(percentuale-- + "s");
+                if (percentuale < 0) percentuale = 30;
+            }, 1000);
+        }
+        );
+
+        function regole(primo, secondo) {
+            var risultato = 0;
+            var regole = {
+                uno: [
+                    ["1", "1"],
+                    ["-1", "-1"],
+                    ["i", "-i"],
+                    ["-i", "i"],
+                ],
+                _uno: [
+                    ["-1", "1"],
+                    ["1", "-1"],
+                    ["i", "i"],
+                    ["-i", "-i"],
+                ],
+                i: [
+                    ["1", "i"],
+                    ["i", "1"],
+                    ["-i", "-1"],
+                    ["-1", "-i"],
+                ],
+                _i: [
+                    ["-1", "i"],
+                    ["i", "-1"],
+                    ["-i", "1"],
+                    ["1", "-i"],
+                ],
+            };
+            var arr = [primo, secondo];
+            for (j = 0; j < 4; j++) {
+                if (regole.uno[j].every((val, i) => val == arr[i])) {
+                    console.log([primo, secondo]);
+                    risultato = 1;
+                    break;
+                } else if (regole._uno[j].every((val, i) => val == arr[i])) {
+                    console.log([primo, secondo]);
+                    risultato = -1;
+                    break;
+                } else if (regole.i[j].every((val, i) => val == arr[i])) {
+                    console.log([primo, secondo]);
+                    risultato = "i";
+                    break;
+                } else if (regole._i[j].every((val, i) => val == arr[i])) {
+                    console.log([primo, secondo]);
+                    risultato = "-i";
+                    break;
+                }
+            }
+            console.log("risultato: ", risultato);
+            return risultato;
+        }
+
+        function tableToJson() {
+            var field = [];
+            var rows = $("tr");
+            for (var i = 0; i < rows.length; i++) {
+                var row = [],
+                    cols = $("td");
+                for (var j = i * 3; j < i * 3 + 3; j++) {
+                    row.push($(cols[j]).html());
+                }
+                field.push(row);
+            }
+            return { field };
+        }
+
+        function arrayToTable(field) {
+            $("#campo").empty();
+            var table = $("#campo");
+            var row, cell;
+
+            body = $("<tbody />");
+            table.append(body);
+
+            for (var i = 0; i < field.length; i++) {
+                row = $("<tr />");
+                table.append(row);
+                for (var j = 0; j < field[i].length; j++) {
+                    cell = $("<td>" + field[i][j] + "</td>");
+                    row.append(cell);
+                }
+            }
+            drag();
+        }
+
+        function drag() {
+            var scoperta = $("[coperta = 'false']");
+            scoperta.attr("draggable", "true");
+            scoperta.on({
+                dragstart: function (e) {
+                    dropped = false;
+                    $(this).hide(60);
+                    console.log("drag iniziato");
+                    dragItem = $(this);
+                },
+                dragend: function (e) {
+                    if (!dropped) {
+                        $(this).show();
+                    }
+                    console.log("drag terminato");
+                    dragItem = null;
+                },
+            });
+            $("td").on({
+                dragover: function (e) {
+                    e.preventDefault();
+                },
+                dragleave: function (e) {
+                },
+                dragenter: function (e) {
+                },
+                drop: function (e) {
+                    console.log(parent.myTurn);
+                    if (!parent.myTurn) { return; }
+
+                    e.stopImmediatePropagation();
+                    console.log("drop");
+                    dropped = true;
+                    var valStart = $(dragItem).attr("value");
+                    console.log("cella: ", $(this).html().toString());
+                    console.log("carta: ", valStart.toString());
+                    $(this).html(
+                        regole($(this).html(), $(dragItem).attr("value"))
+                    );
+                    $(".inner").css("transform", "rotateY(-180deg)");
+                    console.log(tableToJson());
+                    arrayToTable(tableToJson().field);
+                    var win = checkForWin();
+                    console.log(win);
+                    if(win)
+                        parent.log("win!");
+                    parent.sendMove({ table: tableToJson().field, win: win });
+                    parent.myTurn = false;
+                },
+            });
+        }
+
+        function checkForWin() {
+            var field = tableToJson().field;
+
+            for (var i = 0; i < field.length; i++) {
+                if ((field[i][0] == field[i][1] && field[i][1] == field[i][2])
+                    || (field[0][i] == field[1][i] && field[1][i] == field[2][i])) { return true; }
+            }
+            if (field[0][0] == field[1][1] && field[1][1] == field[2][2]
+                || field[0][2] == field[1][1] && field[1][1] == field[2][0]) { return true; }
+
+            return false;
+        }
+
+        function mostraValore() {
+            for (carta of carte) {
+                // console.log(carta)
+                if ($(carta).attr("coperta") == "true") {
+                    $(carta).html(
+                        '<img src="gamecardimg" method="GET" style="max-height: 40px; text-align: center;">',
+                    );
+                } else {
+                    // console.log($(carta).attr('value'))
+                    $(carta).html($(carta).attr("value"));
+                }
+            }
+        }
+
+        function init() {
+            console.log("init");
+            if (parent.game == null) {
+                parent.log("Enter game code first!");
+                parent.loadLobby();
+                return;
+            }
+
+            const players = [];
+            for (let i = 0; i < parent.game.p.length; i++) {
+                players.push(parent.game.p[i]);
+            }
+
+            const index = players.indexOf(parent.id);
+            if (index > -1) { // only splice array when item is found
+                players.splice(index, 1); // 2nd parameter means remove one item only
+            }
+
+
+            document.getElementById('matchCode').innerText = "Match Code: " + parent.game.code;
+            document.getElementById('yourId').innerText = "Your Id: " + parent.id;
+            document.getElementById('opponentId').innerText = "Playing against: " + players[0];
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <h1>Imaginary Tris Epic Duel!</h1>
+    <h2>
+        <ul>
+            <li id="matchCode">Match Code: </li>
+            <li id="yourId">Your Id: </li>
+            <li id="opponentId">Playing against: </li>
+        </ul>
+    </h2>
+
+    <main>
+        <h1><text style="font-family: 'Times New Roman', Times, serif; color:green">C</text>-TR<text
+                style="font-family: 'Comic Sans MS', cursive; color:red">i</text>S</h1>
+        <hr />
+        <br />
+
+        <!--GRIGLIA DI GIOCO  -->
+        <table class="tabella" id="campo" style="width: 150px">
+            <tr>
+                <td>1</td>
+                <td>i</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>-i</td>
+                <td>-1</td>
+                <td>i</td>
+            </tr>
+            <tr>
+                <td>-1</td>
+                <td>-i</td>
+                <td>1</td>
+            </tr>
+        </table>
+
+        <br />
+        <!-- CARTE -->
+        <div class="tappetino">
+            <button class="carta" coperta="false" value="-1"></button>
+            <button class="carta" coperta="false" value="i"></button>
+        </div>
+
+        <br />
+
+        <div class="mazzo">
+            <div class="inner">
+                <div class="carta dorso" coperta="true" value="i">
+                    <img src="gamecardimg" method="GET" style="max-height: 40px; text-align: center" />
+                </div>
+                <div class="carta faccia" coperta="false" value="i"></div>
+
+            </div>
+        </div>
+
+        <div style="text-align: center">
+            <br />
+            <br />
+            <br />
+            <button class="carta" coperta="true" value="1"></button>
+            <button class="carta" coperta="true" value="-1"></button>
+            <button class="carta" coperta="false" value="i"></button>
+            <button class="carta" coperta="true" value="-i"></button>
+            <br />
+            <button class="carta" coperta="true" value="1"></button>
+            <button class="carta" coperta="true" value="-1"></button>
+            <button class="carta" coperta="true" value="i"></button>
+            <button class="carta" coperta="true" value="-i"></button>
+            <br />
+            <button class="carta" coperta="true" value="1"></button>
+            <button class="carta" coperta="false" value="-1"></button>
+            <button class="carta" coperta="true" value="i"></button>
+            <button class="carta" coperta="true" value="-i"></button>
+            <br />
+            <button class="carta" coperta="true" value="1"></button>
+            <button class="carta" coperta="true" value="-1"></button>
+            <button class="carta" coperta="true" value="i"></button>
+            <button class="carta" coperta="false" value="-i"></button>
+            <br />
+            <button class="carta" coperta="true" value="1"></button>
+            <button class="carta" coperta="true" value="-1"></button>
+            <button class="carta" coperta="true" value="i"></button>
+            <button class="carta" coperta="true" value="-i"></button>
+            <br />
+        </div>
+    </main>
+</body>
+
+</html>

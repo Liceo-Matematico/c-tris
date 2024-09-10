@@ -1,0 +1,102 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imaginary Tris</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        var id = null;
+        var game = null;
+        var myTurn = false;
+        socket.on('init', function (socket) {
+            init();
+        })
+
+        socket.on('gameJoined', function (data) {
+            game = data;
+            log("Game Code: " + data.code + "\nPlayers:\n " + data.p[0] + "\n" + data.p[1]);
+            if (data.p[0] == id && data.p[1] != undefined) {
+                myTurn = true;
+            }
+            else {
+                myTurn = false;
+            }
+            try {
+                document.getElementById('iframe').contentWindow.init();
+            } catch (error) {
+
+            }
+        })
+
+        socket.on('recieveMove', (data) => {
+            if (data.win) {
+                log("Lost!");
+                return;
+            }
+            myTurn = true;
+            document.getElementById('iframe').contentWindow.arrayToTable(data.table);
+        })
+
+        socket.on('message', function (data) {
+            log(data);
+        })
+
+        function init() {
+            id = socket.id;
+            log("your ID: " + socket.id);
+            document.getElementById('yourId').innerText = "Your Id: " + socket.id;
+        }
+
+        function joinGame() {
+            console.log("joining game");
+            var code = document.getElementById('iframe').contentWindow.document.getElementById('codeField').value;
+            if (code == "" || code == null) {
+                parent.log("Enter game code first!");
+                parent.loadLobby();
+                return;
+            }
+            socket.emit('joinGame', code, socket.id);
+            loadGame();
+        }
+
+        function sendMove(move) {
+            players = [game.p[0], game.p[1]];
+            const index = players.indexOf(parent.id);
+            if (index > -1) { // only splice array when item is found
+                players.splice(index, 1); // 2nd parameter means remove one item only
+            }
+
+            socket.emit('sendMove', players[0], move);
+        }
+
+        function log(message) {
+            var element = document.createElement('li');
+            element.innerText = message;
+            document.getElementById('console').appendChild(element);
+        }
+
+        function loadLobby() {
+            document.getElementById("iframe").src = "lobby";
+        }
+
+        function loadGame() {
+            document.getElementById("iframe").src = "game";
+        }
+    </script>
+</head>
+
+<body>
+    <h3 id="yourId">Your Id:</h3>
+    <button onclick="loadLobby()">Lobby</button>
+    <button onclick="loadGame()">Game</button>
+    <br>
+    <iframe src="" id="iframe" style="position:absolute;right:25%;width:50%;height:50%"></iframe>
+    <br>
+    <div id="console" right="0px">
+        <h3>Console:</h3>
+    </div>
+</body>
+
+</html>
